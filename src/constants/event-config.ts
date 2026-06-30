@@ -23,7 +23,7 @@ export const defaultEventConfig: EventConfig = {
   venueAddress: "Venue details revealed after confirmation",
   googleMapsLink: "#",
   upiId: "snrled@upi",
-  qrImageUrl: "/placeholders/qr-placeholder.svg",
+  qrImageUrl: "/placeholders/qr-code.svg",
   logoUrl: "/branding/logo.jpg",
   heroImageUrl: "/gallery/snrled-party-05.jpeg",
   galleryImageUrls: [
