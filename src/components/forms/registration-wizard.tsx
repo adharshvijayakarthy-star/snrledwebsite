@@ -467,11 +467,9 @@ export function RegistrationWizard({ config, onClose }: RegistrationWizardProps)
 
                 <div className="mt-8 grid gap-8 md:grid-cols-[280px_1fr] md:items-center">
                   <div className="mx-auto w-full max-w-[260px] rounded-[28px] glass p-4">
-                    <Image
+                    <img
                       src={config.qrImageUrl}
                       alt="Payment QR"
-                      width={260}
-                      height={260}
                       className="w-full rounded-[18px]"
                     />
                   </div>

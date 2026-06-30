@@ -36,7 +36,13 @@ function mapDbToConfig(
     venueAddress: (row.venue_address as string) ?? defaultEventConfig.venueAddress,
     googleMapsLink: (row.google_maps as string) ?? defaultEventConfig.googleMapsLink,
     upiId: (row.upi_placeholder as string) ?? defaultEventConfig.upiId,
-    qrImageUrl: (row.qr_image as string) ?? defaultEventConfig.qrImageUrl,
+    qrImageUrl: (() => {
+      const rawQr = row.qr_image as string | undefined;
+      if (!rawQr || rawQr.includes("qr-placeholder")) {
+        return defaultEventConfig.qrImageUrl;
+      }
+      return rawQr;
+    })(),
     logoUrl: (row.logo_url as string) ?? defaultEventConfig.logoUrl,
     heroImageUrl: (row.hero_image_url as string) ?? defaultEventConfig.heroImageUrl,
     galleryImageUrls,
