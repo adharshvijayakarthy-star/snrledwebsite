@@ -29,7 +29,7 @@ export default function AdminLoginPage() {
       const data = await res.json();
       if (data.success) {
         toast.success("Welcome back.");
-        router.push("/admin");
+        window.location.assign("/admin");
       } else {
         toast.error(data.message || "Login failed.");
       }
