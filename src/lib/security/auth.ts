@@ -7,8 +7,19 @@ const COOKIE_NAME = "snrled_admin_session";
 const SESSION_DURATION = 60 * 60 * 8; // 8 hours
 
 function getSecret() {
-  const secret = process.env.ADMIN_SECRET || process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!secret) throw new Error("ADMIN_SECRET not configured");
+  const secret =
+    process.env.ADMIN_SECRET ||
+    process.env.SUPABASE_SERVICE_ROLE_KEY ||
+    process.env.ADMIN_PASSWORD ||
+    process.env.ADMIN_USERNAME;
+
+  if (!secret) {
+    if (process.env.NODE_ENV === "production") {
+      throw new Error("ADMIN_SECRET not configured");
+    }
+    return new TextEncoder().encode("snrled_dev_secret");
+  }
+
   return new TextEncoder().encode(secret);
 }
 
