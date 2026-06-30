@@ -1,5 +1,6 @@
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
+import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 
 const COOKIE_NAME = "snrled_admin_session";
@@ -17,15 +18,16 @@ export interface AdminSession {
   role: "owner" | "admin" | "moderator";
 }
 
-export async function createAdminSession(session: AdminSession): Promise<void> {
-  const token = await new SignJWT({ ...session })
+export async function createAdminToken(session: AdminSession): Promise<string> {
+  return await new SignJWT({ ...session })
     .setProtectedHeader({ alg: "HS256" })
     .setExpirationTime(`${SESSION_DURATION}s`)
     .setIssuedAt()
     .sign(getSecret());
+}
 
-  const cookieStore = await cookies();
-  cookieStore.set(COOKIE_NAME, token, {
+export function setAdminSessionCookie(response: NextResponse, token: string) {
+  response.cookies.set(COOKIE_NAME, token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",

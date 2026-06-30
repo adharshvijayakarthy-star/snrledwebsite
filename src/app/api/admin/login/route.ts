@@ -1,8 +1,10 @@
 import { createClient } from "@supabase/supabase-js";
-import { apiSuccess, apiError } from "@/lib/api-response";
+import { NextResponse } from "next/server";
+import { apiError } from "@/lib/api-response";
 import { adminLoginSchema } from "@/lib/validation/schemas";
 import {
-  createAdminSession,
+  createAdminToken,
+  setAdminSessionCookie,
   verifyPassword,
 } from "@/lib/security/auth";
 import { rateLimit, getClientIp } from "@/lib/security/rate-limit";
@@ -54,13 +56,15 @@ export async function POST(request: Request) {
         .update({ last_login: new Date().toISOString() })
         .eq("id", admin.id);
 
-      await createAdminSession({
+      const token = await createAdminToken({
         adminId: admin.id,
         username: admin.username,
         role: admin.role,
       });
 
-      return apiSuccess({ username: admin.username, role: admin.role });
+      const response = NextResponse.json({ success: true, data: { username: admin.username, role: admin.role } });
+      setAdminSessionCookie(response, token);
+      return response;
     }
 
     // Env fallback for demo
@@ -71,13 +75,15 @@ export async function POST(request: Request) {
       return apiError("Invalid username or password.", "AUTH_FAILED", 401);
     }
 
-    await createAdminSession({
+    const token = await createAdminToken({
       adminId: "demo-admin",
       username: envUser,
       role: "owner",
     });
 
-    return apiSuccess({ username: envUser, role: "owner" });
+    const response = NextResponse.json({ success: true, data: { username: envUser, role: "owner" } });
+    setAdminSessionCookie(response, token);
+    return response;
   } catch (error) {
     console.error("Login error:", error);
     return apiError("Something went wrong. Please try again.", "INTERNAL_ERROR", 500);
